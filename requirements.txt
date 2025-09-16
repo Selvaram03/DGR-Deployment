@@ -1,3 +1,4 @@
 opcua
 pymongo
 pandas
+cryptography
