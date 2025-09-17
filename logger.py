@@ -5,8 +5,11 @@ import pandas as pd
 import time
 
 # === Config from Environment Variables (Railway secrets) ===
-opc_url = os.getenv("OPC_URL")     
-mongo_url = os.getenv("MONGO_URI")
+opc_url_key = "opc.tcp://192.168.27.234:63840"     
+mongo_url_key = "mongodb+srv://selvaram58_db_user:cFhijYBal60CGpAi@dgr-demo.dh1kxon.mongodb.net/"
+
+opc_url = opc_url_key     
+mongo_url = mongo_url_key
 
 # === Connect OPC UA ===
 opc_client = Client(opc_url)
