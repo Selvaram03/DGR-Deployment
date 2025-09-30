@@ -2,3 +2,4 @@ opcua
 pymongo
 pandas
 cryptography
+openpyxl

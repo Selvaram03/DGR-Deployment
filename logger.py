@@ -5,7 +5,7 @@ import pandas as pd
 import time
 
 # === Config from Environment Variables (Railway secrets) ===
-opc_url_key = "opc.tcp://122.185.135.130:63840"     
+opc_url_key = "opc.tcp://122.185.135.131:63840"     
 mongo_url_key = "mongodb+srv://selvaram58_db_user:cFhijYBal60CGpAi@dgr-demo.dh1kxon.mongodb.net/"
 
 opc_url = opc_url_key     
@@ -57,7 +57,7 @@ try:
         collection.insert_one(record)
         print("Inserted:", record)
 
-        time.sleep(1)  # log every 5 minutes (adjust as needed)
+        time.sleep(60)  # log every 5 minutes (adjust as needed)
 
 except KeyboardInterrupt:
     print("⏹️ Stopped manually")
