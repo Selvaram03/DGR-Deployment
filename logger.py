@@ -41,14 +41,13 @@ try:
         timestamp_utc = datetime.utcnow()  # naive UTC
 
         # --- Convert UTC → IST ---
-        timestamp_utc_aware = pytz.utc.localize(timestamp_utc)
-        timestamp_ist = timestamp_utc_aware.astimezone(IST)
-        timestamp_ist = timestamp_ist.replace(second=0, microsecond=0)  # HH:MM only
+        timestamp_aware = pytz.utc.localize(timestamp_utc)  # make UTC aware
+        timestamp_ist = timestamp_aware.astimezone(IST)     # convert to IST
+        timestamp_ist = timestamp_ist.replace(second=0, microsecond=0)  # keep HH:MM only
 
-        # --- Prepare record ---
+        # --- Prepare record with IST timestamp in same column ---
         record = {
-            "timestamp": timestamp_utc,      # original UTC
-            "timestamp_IST": timestamp_ist   # IST in HH:MM
+            "timestamp": timestamp_ist   # overwrite timestamp column with IST
         }
 
         # --- Irradiation ---
