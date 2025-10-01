@@ -38,7 +38,8 @@ try:
     while True:
         # --- UTC timestamp ---
         timestamp = pd.Timestamp.now(tz='Asia/Kolkata')
-        record = {"timestamp": timestamp}
+        time_string_hh_mm = timestamp.strftime("%H:%M")
+        record = {"timestamp": time_string_hh_mm}
 
         # --- Irradiation ---
         try:
