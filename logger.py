@@ -3,12 +3,13 @@ from opcua import Client
 from pymongo import MongoClient
 import pandas as pd
 import time
+import pytz  # for timezone conversion
 
 # === Config from Environment Variables (Railway secrets) ===
-opc_url_key = "opc.tcp://122.185.135.131:63840"     
+opc_url_key = "opc.tcp://122.185.135.131:63840"
 mongo_url_key = "mongodb+srv://selvaram58_db_user:cFhijYBal60CGpAi@dgr-demo.dh1kxon.mongodb.net/"
 
-opc_url = opc_url_key     
+opc_url = opc_url_key
 mongo_url = mongo_url_key
 
 # === Connect OPC UA ===
@@ -30,34 +31,46 @@ inv_tags = [f"ns=2;s=I1_INV{i}_DATA1" for i in range(1, 19)]
 irradiation_node = opc_client.get_node(irradiation_tag)
 inv_nodes = {tag: opc_client.get_node(tag) for tag in inv_tags}
 
+# IST timezone
+IST = pytz.timezone("Asia/Kolkata")
+
 try:
     while True:
-        timestamp = pd.Timestamp.now()
-        record = {"timestamp": timestamp}
+        # --- UTC timestamp ---
+        timestamp_utc = pd.Timestamp.utcnow().to_pydatetime()
 
-        # Get Irradiation directly
+        # --- Convert UTC → IST ---
+        timestamp_ist = pd.Timestamp(timestamp_utc, tz="UTC").tz_convert(IST).to_pydatetime()
+
+        # --- Keep only HH:MM (zero seconds & microseconds) ---
+        timestamp_ist = timestamp_ist.replace(second=0, microsecond=0)
+
+        record = {
+            "timestamp": timestamp_utc,      # original UTC
+            "timestamp_IST": timestamp_ist   # new IST column
+        }
+
+        # --- Irradiation ---
         try:
             irradiation_val = irradiation_node.get_value()
         except Exception:
             irradiation_val = None
         record["Irradiation"] = irradiation_val
 
-        # Get Daily Generation values
+        # --- Daily Generation per inverter ---
         for i, (tag, node) in enumerate(inv_nodes.items(), start=1):
             try:
                 value = node.get_value()
-                # Only 2nd element (index 1) if array/list
                 daily_gen = value[1] if isinstance(value, (list, tuple)) and len(value) > 1 else None
             except Exception:
                 daily_gen = None
-
             record[f"Daily_Generation_INV{i}"] = daily_gen
 
-        # Insert into MongoDB
+        # --- Insert into MongoDB ---
         collection.insert_one(record)
         print("Inserted:", record)
 
-        time.sleep(60)  # log every 5 minutes (adjust as needed)
+        time.sleep(60)  # log every minute
 
 except KeyboardInterrupt:
     print("⏹️ Stopped manually")
