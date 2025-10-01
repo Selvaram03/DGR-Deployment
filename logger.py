@@ -3,8 +3,7 @@ from opcua import Client
 from pymongo import MongoClient
 import pandas as pd
 import time
-from datetime import datetime
-import pytz  # timezone conversion
+import pytz  # for timezone conversion
 
 # === Config from Environment Variables (Railway secrets) ===
 opc_url_key = "opc.tcp://122.185.135.131:63840"
@@ -38,17 +37,8 @@ IST = pytz.timezone("Asia/Kolkata")
 try:
     while True:
         # --- UTC timestamp ---
-        timestamp_utc = datetime.utcnow()  # naive UTC
-
-        # --- Convert UTC → IST ---
-        timestamp_aware = pytz.utc.localize(timestamp_utc)  # make UTC aware
-        timestamp_ist = timestamp_aware.astimezone(IST)     # convert to IST
-        timestamp_ist = timestamp_ist.replace(second=0, microsecond=0)  # keep HH:MM only
-
-        # --- Prepare record with IST timestamp in same column ---
-        record = {
-            "timestamp": timestamp_ist   # overwrite timestamp column with IST
-        }
+        timestamp = pd.Timestamp.now(tz='Asia/Kolkata')
+        record = {"timestamp": timestamp}
 
         # --- Irradiation ---
         try:
@@ -79,3 +69,4 @@ finally:
     opc_client.disconnect()
     mongo_client.close()
     print("🔌 Disconnected")
+
