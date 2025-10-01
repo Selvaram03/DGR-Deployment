@@ -37,9 +37,8 @@ IST = pytz.timezone("Asia/Kolkata")
 try:
     while True:
         # --- UTC timestamp ---
-        timestamp = pd.Timestamp.now(tz='Asia/Kolkata')
-        time_string_hh_mm = timestamp.strftime("%H:%M")
-        record = {"timestamp": time_string_hh_mm}
+        full_timestamp_string = pd.Timestamp.now(tz='Asia/Kolkata').strftime("%Y-%m-%d %H:%M") 
+        record = {"timestamp": full_timestamp_string}
 
         # --- Irradiation ---
         try:
