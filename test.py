@@ -1,7 +1,7 @@
 from opcua import Client
 
 # === OPC UA Server URL ===
-opc_url = "opc.tcp://192.168.27.234:63840"
+opc_url = "OPC LINK"
 
 # === Connect OPC UA ===
 client = Client(opc_url)
