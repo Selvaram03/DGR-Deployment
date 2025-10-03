@@ -6,11 +6,11 @@ import time
 import pytz  # for timezone conversion
 
 # === Config from Environment Variables (Railway secrets) ===
-opc_url_key = "opc.tcp://122.185.135.131:63840"
-mongo_url_key = "mongodb+srv://selvaram58_db_user:cFhijYBal60CGpAi@dgr-demo.dh1kxon.mongodb.net/"
+opc_url = os.environ.get("OPC_URL")       # Railway env variable for OPC UA
+mongo_url = os.environ.get("MONGO_URI")   # Railway env variable for MongoDB
 
-opc_url = opc_url_key
-mongo_url = mongo_url_key
+if not opc_url or not mongo_url:
+    raise ValueError("❌ OPC_URL or MONGO_URI not found in environment variables!")
 
 # === Connect OPC UA ===
 opc_client = Client(opc_url)
@@ -69,4 +69,3 @@ finally:
     opc_client.disconnect()
     mongo_client.close()
     print("🔌 Disconnected")
-
