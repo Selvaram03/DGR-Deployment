@@ -2,7 +2,7 @@ from opcua import Client, ua
 import pandas as pd
 
 # === OPC UA Server URL ===
-opc_url = "opc.tcp://192.168.22.150:4840"
+opc_url = "OPC LINK"
 
 # === Connect Client ===
 client = Client(opc_url)
